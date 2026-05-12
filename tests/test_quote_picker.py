@@ -73,3 +73,41 @@ def test_sanitize_simplifies_smart_punctuation():
 
 def test_sanitize_strips_non_ascii():
     assert sanitize("café") == "caf"
+
+
+from literature_clock.quote_picker import pick_quote
+
+
+def _rows():
+    return [
+        {"full_quote": "long quote " * 10, "time": "07:32"},
+        {"full_quote": "short", "time": "07:32"},
+        {"full_quote": "medium quote here", "time": "07:32"},
+    ]
+
+
+def test_pick_shortest():
+    pick = pick_quote(_rows(), strategy="shortest", seed_key="ignored")
+    assert pick["full_quote"] == "short"
+
+
+def test_pick_daily_is_deterministic_for_same_seed():
+    a = pick_quote(_rows(), strategy="daily", seed_key="2026-05-12-0732")
+    b = pick_quote(_rows(), strategy="daily", seed_key="2026-05-12-0732")
+    assert a == b
+
+
+def test_pick_daily_can_differ_for_different_seeds():
+    seen = {pick_quote(_rows(), strategy="daily", seed_key=f"2026-05-{d:02d}-0732")["full_quote"]
+            for d in range(1, 32)}
+    assert len(seen) > 1
+
+
+def test_pick_random_returns_one_of_inputs():
+    pick = pick_quote(_rows(), strategy="random", seed_key="ignored")
+    assert pick in _rows()
+
+
+def test_pick_unknown_strategy_falls_back_to_shortest():
+    pick = pick_quote(_rows(), strategy="bogus", seed_key="ignored")
+    assert pick["full_quote"] == "short"

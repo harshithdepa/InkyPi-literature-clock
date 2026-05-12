@@ -60,3 +60,18 @@ def sanitize(text: str) -> str:
     for smart, normal in _SMART_PUNCT_MAP.items():
         out = out.replace(smart, normal)
     return out.encode("ascii", "ignore").decode("utf-8")
+
+
+import random
+
+
+def pick_quote(rows: list[dict], strategy: str, seed_key: str) -> dict:
+    if not rows:
+        raise ValueError("pick_quote called with empty rows")
+    if strategy == "random":
+        return random.choice(rows)
+    if strategy == "daily":
+        rng = random.Random(seed_key)
+        return rng.choice(rows)
+    # shortest (default)
+    return min(rows, key=lambda r: len(r["full_quote"]))
