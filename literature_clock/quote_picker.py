@@ -40,3 +40,23 @@ def resolve_with_fallback(csv_path: Path, hhmm: str, allow_nsfw: bool):
         if rows:
             return rows, candidate_time
     return [], None
+
+
+# Translation table for smart punctuation
+_SMART_PUNCT_MAP = {
+    "‘": "'",  # left single quote
+    "’": "'",  # right single quote
+    "´": "'",  # acute accent
+    "“": '"',  # left double quote
+    "”": '"',  # right double quote
+    "—": "-",  # em dash
+    "–": "-",  # en dash
+}
+
+
+def sanitize(text: str) -> str:
+    out = text.replace("<br/>", " ").replace("<br />", " ").replace("<br>", " ")
+    out = out.replace("\xa0", " ")  # non-breaking space
+    for smart, normal in _SMART_PUNCT_MAP.items():
+        out = out.replace(smart, normal)
+    return out.encode("ascii", "ignore").decode("utf-8")

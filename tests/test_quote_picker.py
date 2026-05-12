@@ -50,3 +50,26 @@ def test_resolve_handles_hour_wrap_at_midnight():
     # 00:01 empty; 00:00 exists -> -1 from 00:01 = 00:00 wins.
     rows, used_time = resolve_with_fallback(FIXTURE, "00:01", allow_nsfw=False)
     assert used_time == "00:00"
+
+
+from literature_clock.quote_picker import sanitize
+
+
+def test_sanitize_replaces_br_variants_with_space():
+    assert sanitize("Hello<br/>World") == "Hello World"
+    assert sanitize("A<br />B") == "A B"
+    assert sanitize("X<br>Y") == "X Y"
+
+
+def test_sanitize_replaces_nbsp_with_space():
+    assert sanitize("foo bar") == "foo bar"
+
+
+def test_sanitize_simplifies_smart_punctuation():
+    assert sanitize("‘hi’") == "'hi'"
+    assert sanitize("“hi”") == '"hi"'
+    assert sanitize("dash—here") == "dash-here"
+
+
+def test_sanitize_strips_non_ascii():
+    assert sanitize("café") == "caf"
