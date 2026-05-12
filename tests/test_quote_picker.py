@@ -111,3 +111,22 @@ def test_pick_random_returns_one_of_inputs():
 def test_pick_unknown_strategy_falls_back_to_shortest():
     pick = pick_quote(_rows(), strategy="bogus", seed_key="ignored")
     assert pick["full_quote"] == "short"
+
+
+from literature_clock.quote_picker import wrap_highlight
+
+
+def test_wrap_highlight_wraps_first_match_case_insensitively():
+    out = wrap_highlight("It was Seven Thirty-Two when it rang.", "seven thirty-two")
+    assert out == "It was <span class=\"litclock-highlight\">Seven Thirty-Two</span> when it rang."
+
+
+def test_wrap_highlight_only_wraps_first_occurrence():
+    out = wrap_highlight("noon and noon again", "noon")
+    assert out.count("<span") == 1
+    assert out.startswith("<span class=\"litclock-highlight\">noon</span> and noon again")
+
+
+def test_wrap_highlight_returns_unchanged_when_phrase_absent():
+    quote = "no time phrase here"
+    assert wrap_highlight(quote, "midnight") == quote
