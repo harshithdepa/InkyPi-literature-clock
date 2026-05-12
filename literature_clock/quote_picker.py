@@ -1,4 +1,5 @@
 import csv
+import random
 import re
 from pathlib import Path
 from datetime import datetime, timedelta
@@ -61,9 +62,6 @@ def sanitize(text: str) -> str:
     for smart, normal in _SMART_PUNCT_MAP.items():
         out = out.replace(smart, normal)
     return out.encode("ascii", "ignore").decode("utf-8")
-
-
-import random
 
 
 def pick_quote(rows: list[dict], strategy: str, seed_key: str) -> dict:

@@ -50,7 +50,7 @@
   );
 
   document.addEventListener('DOMContentLoaded', () => {
-    if (loadPluginSettings) {
+    if (typeof loadPluginSettings !== 'undefined' && loadPluginSettings) {
       const qs = pluginSettings.quote_selection || 'shortest';
       const qsEl = document.querySelector(`input[name="quote_selection"][value="${qs}"]`);
       if (qsEl) qsEl.checked = true;
