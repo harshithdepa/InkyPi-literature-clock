@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="litclock-root litclock-tier-{{ size_tier }}"
-     style="font-family: {{ font_family|default('serif') }};">
+     style="font-family: '{{ font_family|default('serif') }}', serif;">
   <div class="litclock-quote">{{ quote_html|safe }}</div>
   {% if show_attribution and attribution %}
     <div class="litclock-attribution">{{ attribution }}</div>

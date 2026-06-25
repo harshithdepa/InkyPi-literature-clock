@@ -35,7 +35,9 @@ class LiteratureClock(BasePlugin):
     def generate_settings_template(self):
         params = super().generate_settings_template()
         params["style_settings"] = True
-        params["available_fonts"] = [f["name"] for f in get_fonts()]
+        # get_fonts() returns one dict per font *variant*, keyed by "font_family"
+        # (no "name" key). Dedupe to unique family names for the dropdown.
+        params["available_fonts"] = sorted({f["font_family"] for f in get_fonts()})
         return params
 
     def generate_image(self, settings, device_config):
